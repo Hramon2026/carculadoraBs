@@ -23,34 +23,25 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Arial, sans-serif; padding: 15px; display: flex; flex-direction: column; align-items: center; background-color: var(--bg-color); color: var(--text-color); }
-        
         .seccion-tasa-excel { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 15px; }
         .tasa-top { width: 100px; }
         .tasa-top p { text-align: center; font-size: 11px; color: var(--accent-color); font-weight: bold; margin-bottom: 4px; }
         .tasa-top input { width: 100%; padding: 4px; border: 2px solid var(--accent-color); font-size: 18px; text-align: center; border-radius: 8px; background-color: var(--tasa-bg); color: var(--text-color); outline: none; }
-
         .btn-excel-peque { background-color: var(--success-color); color: white; border: none; border-radius: 8px; width: 40px; height: 38px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
         #uploadExcel { display: none; }
-
         .contenedor-app { width: 100%; max-width: 340px; }
         .info-producto { font-size: 13px; color: var(--accent-color); margin-bottom: 5px; text-align: center; font-weight: bold; min-height: 1.2em; }
-
         .grid-headers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .blue-label { background: var(--accent-color); color: #000; font-weight: bold; padding: 8px; font-size: 16px; text-align: center; border-radius: 6px; }
-
         .fila-input { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         input { padding: 10px; border: 1px solid var(--input-border); width: 100%; font-size: 16px; border-radius: 6px; background-color: var(--input-bg); color: var(--text-color); outline: none; }
-
         #reader, #reader-inv { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 10px; border: 2px dashed var(--accent-color); }
         .btn-scan { width: 100%; padding: 12px; background: #607d8b; color: white; border: none; border-radius: 8px; font-weight: bold; margin-bottom: 10px; cursor: pointer; text-transform: uppercase; }
-
         .seccion-totales { margin-top: 15px; padding: 15px; background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: 100%; }
         .total-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
         .resultado { font-weight: bold; color: var(--accent-color); }
-        
         .gran-total { text-align: center; font-size: 20px; font-weight: bold; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--input-border); }
         .btn-borrar { width: 100%; margin-top: 15px; padding: 12px; background-color: #ff5252; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; text-transform: uppercase; }
-
         #vista-inventario { width: 100%; max-width: 600px; display: none; background: var(--card-bg); padding: 15px; border-radius: 12px; }
         .tabla-inv { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
         .tabla-inv th, .tabla-inv td { border: 1px solid var(--input-border); padding: 8px; text-align: left; }
@@ -61,7 +52,6 @@
     </style>
 </head>
 <body>
-
     <div id="vista-principal" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
         <div class="seccion-tasa-excel">
             <div class="tasa-top">
@@ -70,24 +60,12 @@
             </div>
             <button class="btn-excel-peque" onclick="mostrarInventario()">??</button>
         </div>
-
         <div class="contenedor-app">
             <div id="nombre-detectado" class="info-producto"></div>
             <button class="btn-scan" onclick="alternarEscaneo()">?? ESCANEAR PRODUCTO</button>
             <div id="reader" style="display: none;"></div>
-
-            <div class="grid-headers">
-                <div class="blue-label">Bs.</div>
-                <div class="blue-label">Divisa</div>
-            </div>
-
-            <div id="lista-filas">
-                <div class="fila-input">
-                    <input type="text" class="input-bs" placeholder="0,00" oninput="gestionarEntrada(this)">
-                    <input type="text" class="input-divisa" inputmode="decimal" placeholder="0,00" oninput="gestionarEntrada(this)">
-                </div>
-            </div>
-
+            <div class="grid-headers"><div class="blue-label">Bs.</div><div class="blue-label">Divisa</div></div>
+            <div id="lista-filas"><div class="fila-input"><input type="text" class="input-bs" placeholder="0,00" oninput="gestionarEntrada(this)"><input type="text" class="input-divisa" inputmode="decimal" placeholder="0,00" oninput="gestionarEntrada(this)"></div></div>
             <div class="seccion-totales">
                 <div class="total-item"><span>Suma Bs:</span> <span id="sumaBs" class="resultado">0.00</span></div>
                 <div class="total-item"><span>Suma Divisa (en Bs):</span> <span id="sumaDivisaEnBs" class="resultado">0.00</span></div>
@@ -97,30 +75,21 @@
             </div>
         </div>
     </div>
-
     <div id="vista-inventario">
         <button class="btn-regresar" onclick="regresarACalculadora()">? VOLVER</button>
         <button onclick="alternarEscaneoInv()" style="width: 100%; padding: 12px; background: #6495ED; color: white; border: none; border-radius: 8px; font-weight: bold; margin-bottom: 10px; cursor: pointer;">?? BUSCAR / CREAR POR ESCANEO</button>
         <div id="reader-inv" style="display: none;"></div>
-        
         <label for="uploadExcel" class="btn-subir-archivo">?? REEMPLAZAR EXCEL COMPLETAMENTE</label>
         <input type="file" id="uploadExcel" accept=".xlsx, .xls">
-        
-        <div style="overflow-x: auto;">
-            <table class="tabla-inv">
-                <thead><tr><th>Código</th><th>Producto</th><th>Marca</th><th>Unidad</th><th>Precio</th><th>??</th></tr></thead>
-                <tbody id="cuerpo-tabla-inv"></tbody>
-            </table>
-        </div>
+        <div style="overflow-x: auto;"><table class="tabla-inv"><thead><tr><th>Código</th><th>Producto</th><th>Marca</th><th>Unidad</th><th>Precio</th><th>??</th></tr></thead><tbody id="cuerpo-tabla-inv"></tbody></table></div>
     </div>
-
     <script>
-        let inventarioGlobal = {};
-        let html5QrCode;
-        let html5QrCodeInv;
-        let escanerBloqueado = false; 
-        let timersAtajos = {};
+        // ACTIVADOR MODO OFFLINE
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
 
+        let inventarioGlobal = {}; let html5QrCode; let html5QrCodeInv; let escanerBloqueado = false; let timersAtajos = {};
         window.onload = function() {
             const tasaGuardada = localStorage.getItem('miTasaBs');
             if (tasaGuardada) document.getElementById('tasaCambio').value = tasaGuardada.replace('.', ',');
@@ -128,213 +97,85 @@
             if (invGuardado) { inventarioGlobal = JSON.parse(invGuardado); actualizarTablaVista(); }
             calcularTodo();
         };
-
-        function mostrarInventario() {
-            document.getElementById('vista-principal').style.display = 'none';
-            document.getElementById('vista-inventario').style.display = 'block';
-            actualizarTablaVista();
-        }
-
-        async function regresarACalculadora() {
-            await detenerCamaraInv();
-            document.getElementById('vista-inventario').style.display = 'none';
-            document.getElementById('vista-principal').style.display = 'flex';
-        }
-
+        function mostrarInventario() { document.getElementById('vista-principal').style.display = 'none'; document.getElementById('vista-inventario').style.display = 'block'; actualizarTablaVista(); }
+        async function regresarACalculadora() { await detenerCamaraInv(); document.getElementById('vista-inventario').style.display = 'none'; document.getElementById('vista-principal').style.display = 'flex'; }
         function actualizarTablaVista() {
-            const cuerpo = document.getElementById('cuerpo-tabla-inv');
-            cuerpo.innerHTML = "";
+            const cuerpo = document.getElementById('cuerpo-tabla-inv'); cuerpo.innerHTML = "";
             Object.keys(inventarioGlobal).sort().forEach(codigo => {
                 const item = inventarioGlobal[codigo];
-                cuerpo.innerHTML += `
-                    <tr id="fila-${codigo}">
-                        <td>${codigo}</td>
-                        <td contenteditable="true" class="edit-prod">${item.producto}</td>
-                        <td contenteditable="true" class="edit-marca">${item.marca}</td>
-                        <td contenteditable="true" class="edit-unid">${item.unidad || '-'}</td>
-                        <td contenteditable="true" class="edit-precio">${item.precio.toFixed(2)}</td>
-                        <td><button onclick="guardarEdicionFila('${codigo}')" style="background:none; border:none; cursor:pointer; font-size:18px;">??</button></td>
-                    </tr>`;
+                cuerpo.innerHTML += `<tr id="fila-${codigo}"><td>${codigo}</td><td contenteditable="true" class="edit-prod">${item.producto}</td><td contenteditable="true" class="edit-marca">${item.marca}</td><td contenteditable="true" class="edit-unid">${item.unidad || '-'}</td><td contenteditable="true" class="edit-precio">${item.precio.toFixed(2)}</td><td><button onclick="guardarEdicionFila('${codigo}')" style="background:none; border:none; cursor:pointer; font-size:18px;">??</button></td></tr>`;
             });
         }
-
         function guardarEdicionFila(codigo) {
             const fila = document.getElementById(`fila-${codigo}`);
-            const p = fila.querySelector('.edit-prod').innerText;
-            const m = fila.querySelector('.edit-marca').innerText;
-            const u = fila.querySelector('.edit-unid').innerText;
+            const p = fila.querySelector('.edit-prod').innerText; const m = fila.querySelector('.edit-marca').innerText; const u = fila.querySelector('.edit-unid').innerText;
             const pre = parseFloat(fila.querySelector('.edit-precio').innerText.replace(',', '.')) || 0;
-
             inventarioGlobal[codigo] = { producto: p, marca: m, unidad: u, precio: pre };
             localStorage.setItem('miInventario', JSON.stringify(inventarioGlobal));
-            fila.style.backgroundColor = "#e8f5e9";
-            setTimeout(() => fila.style.backgroundColor = "", 1000);
+            fila.style.backgroundColor = "#e8f5e9"; setTimeout(() => fila.style.backgroundColor = "", 1000);
         }
-
         document.getElementById('uploadExcel').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
+                const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'});
                 const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
                 inventarioGlobal = {};
                 jsonData.forEach(item => {
                     const cod = String(item.codigo || item.CODIGO || "").toLowerCase();
-                    if(cod) {
-                        inventarioGlobal[cod] = {
-                            producto: item.producto || item.PRODUCTO || "",
-                            marca: item.marca || item.MARCA || "",
-                            unidad: item.Unidad || item.unidad || item.UNIDAD || "",
-                            precio: parseFloat(item.precio || item.PRECIO) || 0
-                        };
-                    }
+                    if(cod) inventarioGlobal[cod] = { producto: item.producto || item.PRODUCTO || "", marca: item.marca || item.MARCA || "", unidad: item.Unidad || item.unidad || item.UNIDAD || "", precio: parseFloat(item.precio || item.PRECIO) || 0 };
                 });
-                localStorage.setItem('miInventario', JSON.stringify(inventarioGlobal));
-                actualizarTablaVista();
-                alert("Inventario cargado.");
-            };
-            reader.readAsArrayBuffer(e.target.files[0]);
+                localStorage.setItem('miInventario', JSON.stringify(inventarioGlobal)); actualizarTablaVista(); alert("Inventario cargado.");
+            }; reader.readAsArrayBuffer(e.target.files[0]);
         });
-
         function gestionarEntrada(input) {
             const valor = input.value.trim().toLowerCase();
             const filaId = Array.from(document.querySelectorAll('.input-bs')).indexOf(input);
             if (timersAtajos[filaId]) clearTimeout(timersAtajos[filaId]);
-
             if (valor !== "" && isNaN(valor.replace(',', '.'))) {
                 timersAtajos[filaId] = setTimeout(() => {
                     const item = inventarioGlobal[valor];
-                    if (item) {
-                        input.value = item.precio.toFixed(2).replace('.', ',');
-                        document.getElementById('nombre-detectado').innerText = `${item.producto} - ${item.marca} ${item.unidad ? '- ' + item.unidad : ''}`;
-                        verificarFila(input);
-                        calcularTodo();
-                    }
+                    if (item) { input.value = item.precio.toFixed(2).replace('.', ','); document.getElementById('nombre-detectado').innerText = `${item.producto} - ${item.marca}`; verificarFila(input); calcularTodo(); }
                 }, 1500);
-            } else {
-                verificarFila(input);
-                calcularTodo();
-            }
+            } else { verificarFila(input); calcularTodo(); }
         }
-
         function procesarLectura(codigo) {
             if (escanerBloqueado) return;
             const item = inventarioGlobal[codigo.toLowerCase()];
             if (item) {
                 escanerBloqueado = true;
-                const textoCompleto = `${item.producto} - ${item.marca} ${item.unidad ? '- ' + item.unidad : ''}`;
-                document.getElementById('nombre-detectado').innerText = textoCompleto;
-                document.getElementById('nombre-detectado').style.color = "#4CAF50";
-                
+                document.getElementById('nombre-detectado').innerText = `${item.producto} - ${item.marca}`;
                 let filas = document.getElementsByClassName('fila-input');
                 let inputActual = filas[filas.length - 1].querySelector('.input-bs');
-                if (inputActual.value !== "") {
-                    verificarFila(inputActual);
-                    inputActual = document.getElementsByClassName('fila-input')[document.getElementsByClassName('fila-input').length-1].querySelector('.input-bs');
-                }
-                inputActual.value = item.precio.toFixed(2).replace('.', ',');
-                verificarFila(inputActual);
-                calcularTodo();
+                if (inputActual.value !== "") { verificarFila(inputActual); inputActual = document.getElementsByClassName('fila-input')[document.getElementsByClassName('fila-input').length-1].querySelector('.input-bs'); }
+                inputActual.value = item.precio.toFixed(2).replace('.', ','); verificarFila(inputActual); calcularTodo();
                 setTimeout(() => { escanerBloqueado = false; }, 1000);
             }
         }
-
-        function alternarEscaneoInv() {
-            const r = document.getElementById('reader-inv');
-            if (r.style.display === 'none') { r.style.display = 'block'; iniciarCamaraInv(); }
-            else { detenerCamaraInv(); r.style.display = 'none'; }
-        }
-
-        function iniciarCamaraInv() {
-            html5QrCodeInv = new Html5Qrcode("reader-inv");
-            html5QrCodeInv.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (cod) => {
-                const c = cod.toLowerCase();
-                const fila = document.getElementById(`fila-${c}`);
-                if (fila) {
-                    detenerCamaraInv().then(() => {
-                        document.getElementById('reader-inv').style.display = 'none';
-                        fila.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        fila.style.backgroundColor = "#fff9c4";
-                        fila.querySelector('.edit-precio').focus();
-                        setTimeout(() => fila.style.backgroundColor = "", 2000);
-                    });
-                } else {
-                    if (confirm("Código " + c + " no existe. ¿Desea crearlo ahora?")) {
-                        inventarioGlobal[c] = { producto: "NUEVO PRODUCTO", marca: "", unidad: "", precio: 0 };
-                        localStorage.setItem('miInventario', JSON.stringify(inventarioGlobal));
-                        actualizarTablaVista();
-                        detenerCamaraInv().then(() => {
-                            document.getElementById('reader-inv').style.display = 'none';
-                            setTimeout(() => { 
-                                const nuevaFila = document.getElementById(`fila-${c}`);
-                                nuevaFila.scrollIntoView(); 
-                                nuevaFila.querySelector('.edit-prod').focus(); 
-                            }, 500);
-                        });
-                    }
-                }
-            });
-        }
-
-        async function detenerCamaraInv() { 
-            if (html5QrCodeInv && html5QrCodeInv.getState() === 2) { 
-                await html5QrCodeInv.stop(); 
-            }
-        }
-
-        function alternarEscaneo() {
-            const readerDiv = document.getElementById('reader');
-            if (readerDiv.style.display === 'none') { readerDiv.style.display = 'block'; iniciarCamara(); }
-            else { detenerCamara(); readerDiv.style.display = 'none'; }
-        }
-
-        function iniciarCamara() {
-            html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 250, height: 150 } }, procesarLectura);
-        }
-
+        function alternarEscaneoInv() { const r = document.getElementById('reader-inv'); if (r.style.display === 'none') { r.style.display = 'block'; iniciarCamaraInv(); } else { detenerCamaraInv(); r.style.display = 'none'; } }
+        function iniciarCamaraInv() { html5QrCodeInv = new Html5Qrcode("reader-inv"); html5QrCodeInv.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (cod) => { const c = cod.toLowerCase(); const fila = document.getElementById(`fila-${c}`); if (fila) { detenerCamaraInv().then(() => { document.getElementById('reader-inv').style.display = 'none'; fila.scrollIntoView(); fila.style.backgroundColor = "#fff9c4"; }); } }); }
+        async function detenerCamaraInv() { if (html5QrCodeInv && html5QrCodeInv.getState() === 2) await html5QrCodeInv.stop(); }
+        function alternarEscaneo() { const r = document.getElementById('reader'); if (r.style.display === 'none') { r.style.display = 'block'; iniciarCamara(); } else { detenerCamara(); r.style.display = 'none'; } }
+        function iniciarCamara() { html5QrCode = new Html5Qrcode("reader"); html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 250, height: 150 } }, procesarLectura); }
         function detenerCamara() { if (html5QrCode) html5QrCode.stop().catch(() => {}); }
-
-        function parseInput(valor) { if (!valor) return 0; return parseFloat(valor.replace(',', '.')) || 0; }
-
-        function guardarYCalcular() {
-            localStorage.setItem('miTasaBs', document.getElementById('tasaCambio').value.replace(',', '.'));
-            calcularTodo();
-        }
-
+        function parseInput(valor) { return parseFloat(valor.replace(',', '.')) || 0; }
+        function guardarYCalcular() { localStorage.setItem('miTasaBs', document.getElementById('tasaCambio').value.replace(',', '.')); calcularTodo(); }
         function verificarFila(inputActual) {
-            const contenedor = document.getElementById('lista-filas');
-            const filas = contenedor.getElementsByClassName('fila-input');
-            const ultimaFila = filas[filas.length - 1];
-            if (ultimaFila.contains(inputActual) && inputActual.value !== "") {
-                const nuevaFila = document.createElement('div');
-                nuevaFila.className = 'fila-input';
+            const contenedor = document.getElementById('lista-filas'); const filas = contenedor.getElementsByClassName('fila-input');
+            if (filas[filas.length - 1].contains(inputActual) && inputActual.value !== "") {
+                const nuevaFila = document.createElement('div'); nuevaFila.className = 'fila-input';
                 nuevaFila.innerHTML = `<input type="text" class="input-bs" placeholder="0,00" oninput="gestionarEntrada(this)"><input type="text" class="input-divisa" inputmode="decimal" placeholder="0,00" oninput="gestionarEntrada(this)">`;
                 contenedor.appendChild(nuevaFila);
             }
         }
-
         function calcularTodo() {
             const tasa = parseInput(document.getElementById('tasaCambio').value);
-            let totalBs = 0;
-            document.querySelectorAll('.input-bs').forEach(inp => totalBs += parseInput(inp.value));
-            let totalDivisa = 0;
-            document.querySelectorAll('.input-divisa').forEach(inp => totalDivisa += parseInput(inp.value));
-            const divisaEnBs = totalDivisa * tasa;
-            const totalGen = totalBs + divisaEnBs;
-            const totalSoloDivisa = tasa > 0 ? totalGen / tasa : 0;
-            
-            document.getElementById('sumaBs').innerText = totalBs.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('sumaDivisaEnBs').innerText = divisaEnBs.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('totalGeneral').innerText = totalGen.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('totalSoloDivisa').innerText = totalSoloDivisa.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            let tBs = 0; document.querySelectorAll('.input-bs').forEach(i => tBs += parseInput(i.value));
+            let tDiv = 0; document.querySelectorAll('.input-divisa').forEach(i => tDiv += parseInput(i.value));
+            const divEnBs = tDiv * tasa; const totalG = tBs + divEnBs;
+            document.getElementById('sumaBs').innerText = tBs.toFixed(2); document.getElementById('sumaDivisaEnBs').innerText = divEnBs.toFixed(2);
+            document.getElementById('totalGeneral').innerText = totalG.toFixed(2); document.getElementById('totalSoloDivisa').innerText = (tasa > 0 ? totalG / tasa : 0).toFixed(2);
         }
-
-        function limpiarColumnas() {
-            document.getElementById('lista-filas').innerHTML = `<div class="fila-input"><input type="text" class="input-bs" placeholder="0,00" oninput="gestionarEntrada(this)"><input type="text" class="input-divisa" inputmode="decimal" placeholder="0,00" oninput="gestionarEntrada(this)"></div>`;
-            document.getElementById('nombre-detectado').innerText = "";
-            calcularTodo();
-        }
+        function limpiarColumnas() { document.getElementById('lista-filas').innerHTML = `<div class="fila-input"><input type="text" class="input-bs" placeholder="0,00" oninput="gestionarEntrada(this)"><input type="text" class="input-divisa" inputmode="decimal" placeholder="0,00" oninput="gestionarEntrada(this)"></div>`; document.getElementById('nombre-detectado').innerText = ""; calcularTodo(); }
     </script>
 </body>
 </html>

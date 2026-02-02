@@ -49,6 +49,8 @@
         [contenteditable="true"]:focus { background-color: rgba(100, 149, 237, 0.2); outline: 2px solid var(--accent-color); }
         .btn-regresar { background: #607d8b; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 15px; width: 100%; font-weight: bold; }
         .btn-subir-archivo { background: var(--success-color); color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 10px; font-weight: bold; display: block; text-align: center; }
+        .resaltar-fila { background-color: #fff9c4 !important; transition: background-color 2s; }
+        .nueva-fila-resaltar { background-color: #e1f5fe !important; }
     </style>
 </head>
 <body>
@@ -94,6 +96,7 @@
         };
         function mostrarInventario() { document.getElementById('vista-principal').style.display = 'none'; document.getElementById('vista-inventario').style.display = 'block'; actualizarTablaVista(); }
         async function regresarACalculadora() { await detenerCamaraInv(); document.getElementById('vista-inventario').style.display = 'none'; document.getElementById('vista-principal').style.display = 'flex'; }
+        
         function actualizarTablaVista() {
             const cuerpo = document.getElementById('cuerpo-tabla-inv'); cuerpo.innerHTML = "";
             Object.keys(inventarioGlobal).sort().forEach(codigo => {
@@ -101,6 +104,7 @@
                 cuerpo.innerHTML += `<tr id="fila-${codigo}"><td>${codigo}</td><td contenteditable="true" class="edit-prod">${item.producto}</td><td contenteditable="true" class="edit-marca">${item.marca}</td><td contenteditable="true" class="edit-unid">${item.unidad || '-'}</td><td contenteditable="true" class="edit-precio">${item.precio.toFixed(2)}</td><td><button onclick="guardarEdicionFila('${codigo}')" style="background:none; border:none; cursor:pointer; font-size:18px;">??</button></td></tr>`;
             });
         }
+
         function guardarEdicionFila(codigo) {
             const fila = document.getElementById(`fila-${codigo}`);
             const p = fila.querySelector('.edit-prod').innerText; const m = fila.querySelector('.edit-marca').innerText; const u = fila.querySelector('.edit-unid').innerText;
@@ -109,6 +113,43 @@
             localStorage.setItem('miInventario', JSON.stringify(inventarioGlobal));
             fila.style.backgroundColor = "#e8f5e9"; setTimeout(() => fila.style.backgroundColor = "", 1000);
         }
+
+        function alternarEscaneoInv() { const r = document.getElementById('reader-inv'); if (r.style.display === 'none') { r.style.display = 'block'; iniciarCamaraInv(); } else { detenerCamaraInv(); r.style.display = 'none'; } }
+
+        function iniciarCamaraInv() { 
+            html5QrCodeInv = new Html5Qrcode("reader-inv"); 
+            html5QrCodeInv.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (cod) => { 
+                const c = cod.toLowerCase(); 
+                detenerCamaraInv().then(() => { 
+                    document.getElementById('reader-inv').style.display = 'none';
+                    
+                    if (inventarioGlobal[c]) {
+                        // 1. SI EXISTE: BUSCAR Y RESALTAR
+                        const fila = document.getElementById(`fila-${c}`);
+                        if (fila) {
+                            fila.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            fila.classList.add('resaltar-fila');
+                            setTimeout(() => fila.classList.remove('resaltar-fila'), 3000);
+                        }
+                    } else {
+                        // 2. SI NO EXISTE: CREAR NUEVA FILA
+                        inventarioGlobal[c] = { producto: "NUEVO", marca: "EDITAR", unidad: "", precio: 0 };
+                        localStorage.setItem('miInventario', JSON.stringify(inventarioGlobal));
+                        actualizarTablaVista();
+                        // Ir a la nueva fila recién creada
+                        setTimeout(() => {
+                            const nuevaFila = document.getElementById(`fila-${c}`);
+                            nuevaFila.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            nuevaFila.classList.add('nueva-fila-resaltar');
+                            setTimeout(() => nuevaFila.classList.remove('nueva-fila-resaltar'), 3000);
+                        }, 200);
+                    }
+                }); 
+            }); 
+        }
+
+        async function detenerCamaraInv() { if (html5QrCodeInv && html5QrCodeInv.getState() === 2) await html5QrCodeInv.stop(); }
+
         document.getElementById('uploadExcel').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -122,6 +163,7 @@
                 localStorage.setItem('miInventario', JSON.stringify(inventarioGlobal)); actualizarTablaVista(); alert("Inventario cargado.");
             }; reader.readAsArrayBuffer(e.target.files[0]);
         });
+
         function gestionarEntrada(input) {
             const valor = input.value.trim().toLowerCase();
             const filaId = Array.from(document.querySelectorAll('.input-bs')).indexOf(input);
@@ -138,6 +180,7 @@
                 }, 1500);
             } else { verificarFila(input); calcularTodo(); }
         }
+
         function procesarLectura(codigo) {
             if (escanerBloqueado) return;
             const item = inventarioGlobal[codigo.toLowerCase()];
@@ -151,14 +194,13 @@
                 setTimeout(() => { escanerBloqueado = false; }, 2000);
             }
         }
-        function alternarEscaneoInv() { const r = document.getElementById('reader-inv'); if (r.style.display === 'none') { r.style.display = 'block'; iniciarCamaraInv(); } else { detenerCamaraInv(); r.style.display = 'none'; } }
-        function iniciarCamaraInv() { html5QrCodeInv = new Html5Qrcode("reader-inv"); html5QrCodeInv.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (cod) => { const c = cod.toLowerCase(); const fila = document.getElementById(`fila-${c}`); if (fila) { detenerCamaraInv().then(() => { document.getElementById('reader-inv').style.display = 'none'; fila.scrollIntoView(); fila.style.backgroundColor = "#fff9c4"; }); } }); }
-        async function detenerCamaraInv() { if (html5QrCodeInv && html5QrCodeInv.getState() === 2) await html5QrCodeInv.stop(); }
+
         function alternarEscaneo() { const r = document.getElementById('reader'); if (r.style.display === 'none') { r.style.display = 'block'; iniciarCamara(); } else { detenerCamara(); r.style.display = 'none'; } }
         function iniciarCamara() { html5QrCode = new Html5Qrcode("reader"); html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 250, height: 150 } }, procesarLectura); }
         function detenerCamara() { if (html5QrCode) html5QrCode.stop().catch(() => {}); }
         function parseInput(valor) { return parseFloat(valor.replace(',', '.')) || 0; }
         function guardarYCalcular() { localStorage.setItem('miTasaBs', document.getElementById('tasaCambio').value.replace(',', '.')); calcularTodo(); }
+        
         function verificarFila(inputActual) {
             const contenedor = document.getElementById('lista-filas'); const filas = contenedor.getElementsByClassName('fila-input');
             if (filas[filas.length - 1].contains(inputActual) && inputActual.value !== "") {
@@ -167,6 +209,7 @@
                 contenedor.appendChild(nuevaFila);
             }
         }
+
         function calcularTodo() {
             const tasa = parseInput(document.getElementById('tasaCambio').value);
             let totalBs = 0; document.querySelectorAll('.input-bs').forEach(inp => totalBs += parseInput(inp.value));
@@ -179,6 +222,7 @@
             document.getElementById('totalGeneral').innerText = totalGen.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             document.getElementById('totalSoloDivisa').innerText = totalSoloDivisa.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
+
         function limpiarColumnas() {
             document.getElementById('lista-filas').innerHTML = `<div class="fila-input"><input type="text" class="input-bs" placeholder="0,00" oninput="gestionarEntrada(this)"><input type="text" class="input-divisa" inputmode="decimal" placeholder="0,00" oninput="gestionarEntrada(this)"></div>`;
             document.getElementById('nombre-detectado').innerText = "";

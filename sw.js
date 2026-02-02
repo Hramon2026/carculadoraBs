@@ -1,14 +1,24 @@
-const CACHE_NAME = 'calc-cache-v1';
-const assets = [
+const CACHE_NAME = 'calc-bs-v1';
+const ASSETS = [
   './',
   './index.html',
   './manifest.json'
 ];
 
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(assets)));
+// Instalar el Service Worker y guardar en caché
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
+  );
 });
 
-self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
+// Estrategia de carga: Red primero, si falla, Caché
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    fetch(e.request).catch(() => {
+      return caches.match(e.request);
+    })
+  );
 });

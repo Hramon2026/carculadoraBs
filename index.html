@@ -84,11 +84,6 @@
         <div style="overflow-x: auto;"><table class="tabla-inv"><thead><tr><th>Código</th><th>Producto</th><th>Marca</th><th>Unidad</th><th>Precio</th><th>??</th></tr></thead><tbody id="cuerpo-tabla-inv"></tbody></table></div>
     </div>
     <script>
-        // ACTIVADOR MODO OFFLINE
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js');
-        }
-
         let inventarioGlobal = {}; let html5QrCode; let html5QrCodeInv; let escanerBloqueado = false; let timersAtajos = {};
         window.onload = function() {
             const tasaGuardada = localStorage.getItem('miTasaBs');
@@ -134,7 +129,12 @@
             if (valor !== "" && isNaN(valor.replace(',', '.'))) {
                 timersAtajos[filaId] = setTimeout(() => {
                     const item = inventarioGlobal[valor];
-                    if (item) { input.value = item.precio.toFixed(2).replace('.', ','); document.getElementById('nombre-detectado').innerText = `${item.producto} - ${item.marca}`; verificarFila(input); calcularTodo(); }
+                    if (item) { 
+                        input.value = item.precio.toFixed(2).replace('.', ','); 
+                        document.getElementById('nombre-detectado').innerText = `${item.producto} - ${item.marca} (${item.unidad || ''})`; 
+                        verificarFila(input); 
+                        calcularTodo(); 
+                    }
                 }, 1500);
             } else { verificarFila(input); calcularTodo(); }
         }
@@ -143,12 +143,12 @@
             const item = inventarioGlobal[codigo.toLowerCase()];
             if (item) {
                 escanerBloqueado = true;
-                document.getElementById('nombre-detectado').innerText = `${item.producto} - ${item.marca}`;
+                document.getElementById('nombre-detectado').innerText = `${item.producto} - ${item.marca} (${item.unidad || ''})`;
                 let filas = document.getElementsByClassName('fila-input');
                 let inputActual = filas[filas.length - 1].querySelector('.input-bs');
                 if (inputActual.value !== "") { verificarFila(inputActual); inputActual = document.getElementsByClassName('fila-input')[document.getElementsByClassName('fila-input').length-1].querySelector('.input-bs'); }
                 inputActual.value = item.precio.toFixed(2).replace('.', ','); verificarFila(inputActual); calcularTodo();
-                setTimeout(() => { escanerBloqueado = false; }, 1000);
+                setTimeout(() => { escanerBloqueado = false; }, 2000);
             }
         }
         function alternarEscaneoInv() { const r = document.getElementById('reader-inv'); if (r.style.display === 'none') { r.style.display = 'block'; iniciarCamaraInv(); } else { detenerCamaraInv(); r.style.display = 'none'; } }
@@ -169,13 +169,27 @@
         }
         function calcularTodo() {
             const tasa = parseInput(document.getElementById('tasaCambio').value);
-            let tBs = 0; document.querySelectorAll('.input-bs').forEach(i => tBs += parseInput(i.value));
-            let tDiv = 0; document.querySelectorAll('.input-divisa').forEach(i => tDiv += parseInput(i.value));
-            const divEnBs = tDiv * tasa; const totalG = tBs + divEnBs;
-            document.getElementById('sumaBs').innerText = tBs.toFixed(2); document.getElementById('sumaDivisaEnBs').innerText = divEnBs.toFixed(2);
-            document.getElementById('totalGeneral').innerText = totalG.toFixed(2); document.getElementById('totalSoloDivisa').innerText = (tasa > 0 ? totalG / tasa : 0).toFixed(2);
+            let totalBs = 0; document.querySelectorAll('.input-bs').forEach(inp => totalBs += parseInput(inp.value));
+            let totalDivisa = 0; document.querySelectorAll('.input-divisa').forEach(inp => totalDivisa += parseInput(inp.value));
+            const divisaEnBs = totalDivisa * tasa;
+            const totalGen = totalBs + divisaEnBs;
+            const totalSoloDivisa = tasa > 0 ? totalGen / tasa : 0;
+            document.getElementById('sumaBs').innerText = totalBs.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('sumaDivisaEnBs').innerText = divisaEnBs.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('totalGeneral').innerText = totalGen.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('totalSoloDivisa').innerText = totalSoloDivisa.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
-        function limpiarColumnas() { document.getElementById('lista-filas').innerHTML = `<div class="fila-input"><input type="text" class="input-bs" placeholder="0,00" oninput="gestionarEntrada(this)"><input type="text" class="input-divisa" inputmode="decimal" placeholder="0,00" oninput="gestionarEntrada(this)"></div>`; document.getElementById('nombre-detectado').innerText = ""; calcularTodo(); }
+        function limpiarColumnas() {
+            document.getElementById('lista-filas').innerHTML = `<div class="fila-input"><input type="text" class="input-bs" placeholder="0,00" oninput="gestionarEntrada(this)"><input type="text" class="input-divisa" inputmode="decimal" placeholder="0,00" oninput="gestionarEntrada(this)"></div>`;
+            document.getElementById('nombre-detectado').innerText = "";
+            calcularTodo();
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('Error:', err));
+            });
+        }
     </script>
 </body>
 </html>
